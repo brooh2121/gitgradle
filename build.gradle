@@ -1,16 +1,3 @@
-/*
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'org.ajoberstar:gradle-git:1.7.2'
-	}
-}
-
-import org.ajoberstar.grgit.Grgit
-*/
-
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
@@ -37,16 +24,17 @@ tasks.named('test') {
 }
 
 def gitcommand
-def resultArray = []
+def branchName
+def releaseMatch
 
 task dummyTask() {
-	doLast {
-		gitcommand = 'git branch -vv'.execute().text.split().toString()
-		//println gitcommand.getClass()
-		gitcommand = gitcommand.split(",")
-		for (String values : gitcommand) {
-			resultArray.add(values)
+	doFirst {
+		gitcommand = 'git branch --show-current'.execute().text.split().toString()
+		branchName = gitcommand.substring(1,gitcommand.length() -1)
+		println branchName
+		releaseMatch = branchName =~ /^(release|hotfix)\/(?<version>[0-9\.]+)$/
+		if (releaseMatch.matches()) {
+			println "this branch is release or hotfix"
 		}
-		println resultArray[1]
 	}
 }
