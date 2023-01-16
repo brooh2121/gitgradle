@@ -1,3 +1,4 @@
+/*
 buildscript {
 	repositories {
 		mavenCentral()
@@ -8,6 +9,7 @@ buildscript {
 }
 
 import org.ajoberstar.grgit.Grgit
+*/
 
 plugins {
 	id 'java'
@@ -34,12 +36,17 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-def branch
+def gitcommand
+def resultArray = []
 
-task getBranchName() {
+task dummyTask() {
 	doLast {
-		branch = System.getenv("GIT_BRANCH") ?: Grgit.branch.current.fullName
-		println branch
+		gitcommand = 'git branch -vv'.execute().text.split().toString()
+		//println gitcommand.getClass()
+		gitcommand = gitcommand.split(",")
+		for (String values : gitcommand) {
+			resultArray.add(values)
+		}
+		println resultArray[1]
 	}
 }
-
